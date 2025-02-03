@@ -6,73 +6,150 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Резюме</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .container{
+            width: 80%;
+            max-width: 1000px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0, 0.1);
+        }
+        header{
+            text-align: center;
+            padding: 10px 0;
+        }
+        nav{
+            background: #cdffd6;
+            padding: 10px;
+            border-radius: 7px;
+            text-align: center;
+        }
+        nav a{
+            color: black;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        nav a:hover{
+            text-decoration: underline;
+        }
+        .content{
+            display: flex;
+            margin-top: 20px;
+        }
+        .contact{
+            width: 30%;
+        }
+        .contact a{
+            color: black;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+        .contact a:hover{
+            text-decoration: underline;
+        }
+        .main{
+            padding-left: 20px;
+            padding-right: 100px;
+        }
+        .main img{
+            width: 100%;
+            max-width: 200%;
+            padding-top: 15px;
+            padding-right: 15px;
+            border-radius: 10px;
+        }
+        footer{
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: #cdffd6;
+            color: black;
+            border-radius: 10px;
+        }
+        .contact-image{
+            padding-top: 20px;
+        }
+    </style>
 </head>
 <body>
-<table width="100%" border="1">
-    <tr>
-        <td colspan="3" align="center"><h1>Резюме</h1></td>
-    </tr>
-    <tr>
-        <td width="25%" valign="top">
-            <b>Навигация</b><br><br>
-            <a href="index.html">Главная</a><br>
-            <a href="biography.html">Биография</a><br>
-            <a href="hobby.html">Хобби</a><br>
-            <a href="summary.html">Резюме</a><br>
-            <hr>
-            <h2>Фото</h2>
-            <img src="https://storage.yandexcloud.net/storage.yasno.media/nat-geo/images/2020/6/25/0fc978aba29e466e8eb4ffc946532d5e.max-1200x800.jpg" width="300"><br>
-        </td>
-        <td width="50%" valign="top">
+<div class="container">
+    <header>
+        <h1>Резюме</h1>
+    </header>
+    <nav>
+        <a href="index.html">Главная</a>
+        <a href="biography.html">Биография</a>
+        <a href="hobby.html">Хобби</a>
+        <a href="summary.html">Резюме</a>
+    </nav>
+    <div class="content">
+        <main class="main">
             <blockquote>
                 <p><em>"Программирование — это деньги"</em></p>
             </blockquote>
             <h2>Опыт работы</h2>
             <p><b>Стажёр-разработчик</b> настоящее время</p>
             <ul>
-                <li>Разработка и поддержка веб-приложений на <span>ASP.NET Core</span>.</li>
-                <li>Работа с базами данных: <span>SQL</span>, <span>EF Core</span>.</li>
-                <li>Использование <span>Redis</span> для кэширования данных.</li>
-                <li>Вёрстка интерфейсов с использованием <span>HTML</span>, <span>CSS</span> и <span>JavaScript</span>.</li>
-                <li>Работа с системой контроля версий <span>Git</span>.</li>
-                <li>Деплой приложений с использованием <span>Docker</span> на серверах под управлением <span>Ubuntu</span>.</li>
+                <li>Разработка и поддержка веб-приложений на ASP.NET Core.</li>
+                <li>Работа с базами данных: SQL, EF Core.</li>
+                <li>Использование Redis для кэширования данных.</li>
+                <li>Вёрстка интерфейсов с использованием HTML, CSS и JavaScript.</li>
+                <li>Работа с системой контроля версий Git.</li>
+                <li>Деплой приложений с использованием Docker на серверах под управлением Ubuntu.</li>
             </ul>
             <hr>
             <h2>Навыки</h2>
             <p>Мой стек технологий:</p>
             <ul>
-                <li><span>.NET 8</span> — разработка backend-приложений.</li>
-                <li><span>ASP.NET Core</span> — создание веб-API.</li>
-                <li><span>SQL</span> — проектирование и оптимизация баз данных.</li>
-                <li><span>Entity Framework Core</span> — работа с ORM.</li>
-                <li><span>Redis</span> — кэширование и работа с распределёнными данными.</li>
-                <li><span>HTML + CSS + JS</span> — создание интерфейсов.</li>
-                <li><span>Git</span> — контроль версий и командная разработка.</li>
-                <li><span>Docker</span> — контейнеризация приложений.</li>
-                <li><span>Ubuntu</span> — работа с Linux-серверами.</li>
+                <li>.NET 8 — разработка backend-приложений.</li>
+                <li>ASP.NET Core — создание веб-API.</li>
+                <li>SQL — проектирование и оптимизация баз данных.</li>
+                <li>Entity Framework Core — работа с ORM.</li>
+                <li>Redis — кэширование и работа с распределёнными данными.</li>
+                <li>HTML + CSS + JS — создание интерфейсов.</li>
+                <li>Git — контроль версий и командная разработка.</li>
+                <li>Docker — контейнеризация приложений.</li>
+                <li>Ubuntu — работа с Linux-серверами.</li>
             </ul>
             <hr>
             <h2>Образование</h2>
             <p><b>Университет</b> (2022 - 2026)</p>
             <ul>
                 <li>ИКТЗИ.</li>
-                <li>Специальность: <span>Программная инженерия</span>.</li>
-                <li>Изучаемые технологии: <span>C#</span>, <span>Java</span>, <span>Web-разработка</span>, <span>Базы данных</span>.</li>
+                <li>Специальность: Программная инженерия.</li>
+                <li>Изучаемые технологии: C#, Java, Web-разработка, Базы данных.</li>
             </ul>
-        </td>
-        <td width="25%" valign="top">
+        </main>
+        <div class="contact">
             <h2>Контактная информация</h2>
             <p>Email: <a href="mailto:pochta@gmail.com">pochta@gmail.com</a></p>
             <p>Telegram: <a href="https://t.me/seregane228">@seregane228</a></p>
             <p>GitHub: <a href="https://github.com/sergey2k161">sergey2k161</a></p>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="3" align="center">
-            <hr>
-            <p>&copy; 2025 Сергей. Все права защищены.</p>
-        </td>
-    </tr>
-</table>
+            <div class="contact-image">
+                <h2>Фото</h2>
+                <img src="https://storage.yandexcloud.net/storage.yasno.media/nat-geo/images/2020/6/25/0fc978aba29e466e8eb4ffc946532d5e.max-1200x800.jpg" width="300">
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2025 Сергей. Все права защищены.</p>
+    </footer>
+</div>
 </body>
 </html>

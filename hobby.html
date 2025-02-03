@@ -1,64 +1,113 @@
-﻿<!doctype html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>О себе</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Хобби</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .container{
+            width: 80%;
+            max-width: 1000px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0, 0.1);
+        }
+        header{
+            text-align: center;
+            padding: 10px 0;
+        }
+        nav{
+            background: #cdffd6;
+            padding: 10px;
+            border-radius: 7px;
+            text-align: center;
+        }
+        nav a{
+            color: black;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        nav a:hover{
+            text-decoration: underline;
+        }
+        .content{
+            display: flex;
+            margin-top: 20px;
+        }
+        .contact{
+            width: 30%;
+        }
+        .contact a{
+            color: black;
+            text-decoration: none;
+        }
+        .contact a:hover{
+            text-decoration: underline;
+        }
+        .main{
+            padding-right: 20px;
+        }
+
+        footer{
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: #cdffd6;
+            color: black;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
-<table width="100%" border="1">
-    <tr>
-        <td colspan="3" align="center"><h1>Хобби</h1></td>
-    </tr>
-    <tr>
-        <td width="25%"  valign="top">
-            <b>Навигация</b><br><br>
-            <a href="index.html">Главная</a><br>
-            <a href="biography.html">Биография</a><br>
-            <a href="hobby.html">Хобби</a><br>
-            <a href="summary.html">Резюме</a><br>
-            <hr>
-            <h2>Фото</h2>
-            <img src="https://storage.yandexcloud.net/storage.yasno.media/nat-geo/images/2020/6/25/0fc978aba29e466e8eb4ffc946532d5e.max-1200x800.jpg"  width="300"><br>
-
-        </td>
-        <td width="50%" valign="top">
-            <blockquote >
+<div class="container">
+    <header>
+        <h1>Хобби</h1>
+    </header>
+    <nav>
+        <a href="index.html">Главная</a>
+        <a href="biography.html">Биография</a>
+        <a href="hobby.html">Хобби</a>
+        <a href="summary.html">Резюме</a>
+    </nav>
+    <div class="content">
+        <section class="main">
+            <blockquote>
                 <p><em>"Программирование — это деньги"</em></p>
             </blockquote>
-            <p>Хобби это неотъемлемая часть жизни каждого человека, я, как и любой другой имею хобби.</p>
-            <hr>
-            <blockquote>
-                <p><em>Хоккей</em></p>
-            </blockquote>
-            <p>В детстве я много играл в хоккей, в том числе в дворовой команде, где мы соревновались среди других команд из других дворов.</p>
-            <hr>
-            <blockquote>
-                <p><em>Видеоигры</em></p>
-            </blockquote>
-            <p>В эру современны технологий, каждый так или иначе тратит львиную долю своей жизни в видеоиграх.</p>
-            <hr>
-            <blockquote>
-                <p><em>Фильмы</em></p>
-            </blockquote>
-            <p>Фильмы и сериалы это моя страсть, я смотрю их когда работаю или отдыхаю, когда мне грустно или весело... Всегда</p>
-
-        </td>
-        <td width="25%" valign="top">
+            <p>Хобби - неотъемлемая часть жизни каждого человека, и я тоже имею свои увлечения.</p>
+            <h2>Хоккей</h2>
+            <p>В детстве я играл в хоккей, участвуя в дворовых командах и соревнованиях.</p>
+            <h2>Видеоигры</h2>
+            <p>Современные технологии позволяют нам проводить много времени за видеоиграми.</p>
+            <h2>Фильмы</h2>
+            <p>Я увлекаюсь кино и сериалами, они сопровождают меня в любой момент жизни.</p>
+        </section>
+        <aside class="contact">
             <h2>Контактная информация</h2>
             <p>Email: <a href="mailto:pochta@gmail.com">pochta@gmail.com</a></p>
             <p>Telegram: <a href="https://t.me/seregane228">@seregane228</a></p>
             <p>GitHub: <a href="https://github.com/sergey2k161">sergey2k161</a></p>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="3" align="center">
-            <hr>
-            <p>&copy; 2025 Сергей. Все права защищены.</p>
-        </td>
-    </tr>
-</table>
+        </aside>
+    </div>
+    <footer>
+        <p>&copy; 2025 Сергей. Все права защищены.</p>
+    </footer>
+</div>
 </body>
 </html>
