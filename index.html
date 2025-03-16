@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="index.js"></script>
+    <script type="text/javascript" src="doska.js"></script>
+    <style type="text/css">
+        td {
+            width: 50px;
+            height: 50px;
+        }
+        .r1 {
+            background-color: gray;
+        }
+        .r2 {
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+  <div>
+      <h1>Текущая дата</h1>
+      <table id="dateTable"></table>
+
+      <h3>До сессии осталось:</h3>
+      <input id="daysToSession" readonly>
+
+      <h3>Памятная дата</h3>
+      <button onclick="saveMemoryDate()">Введите дату</button>
+      <p id="memoryDateResult"></p>
+
+      <h3>Сумма числовой последовательности</h3>
+      <button onclick="calculateSequenceSum()">Вычислить</button>
+      <p id="sequenceResult"></p>
+  </div>
+  <div class="calculate">
+      <h1>Калькулятор</h1>
+
+      <label for="x">Число X</label>
+      <input id="x" placeholder="любое число">
+
+      <label for="operation">Знак</label>
+      <input id="operation" placeholder="+ - * /">
+
+      <label for="y">Число Y</label>
+      <input id="y" placeholder="любое число">
+
+      <button type="submit" onclick="calculateClick()">Расчет</button>
+      <h4 id="resultCalc">Результат</h4>
+  </div>
+  <hr>
+  <div class="workWithNumber">
+      <h1>Задание 18 - сумма цифр во второй половине числа (младшие разряды)</h1>
+      <label for="number">Число для задания 18</label>
+      <input id="number" placeholder="любое число">
+      <button type="submit" onclick="sumSecondHalfDigitsClick()">Показать</button>
+      <h4 id="resultHalf">Результат</h4>
+      <hr>
+
+      <h1>K-я цифра последовательности</h1>
+      <label for="numberDigit">Число для задания 31</label>
+      <input id="numberDigit" placeholder="любое число">
+      <button type="submit" onclick="findKthDigitClick()">Показать</button>
+      <h4 id="resultDigit">Результат</h4>
+  </div>
+  <hr>
+    Б
+
+</body>
+</html>
