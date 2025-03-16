@@ -5,6 +5,7 @@
     return true;
 }
 
+alert("Калькулятор")
 let x = +prompt("Введите первое число (x):");
 if (!isValidNumber(x)) {
     alert("Ошибка: Первое число введено некорректно.");

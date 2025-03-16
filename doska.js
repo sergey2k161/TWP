@@ -29,15 +29,15 @@ function sumSecondHalfDigits(number) {
 
     let sum = 0;
     for (let el of secondHalf) {
-        console.log(`el = ${el}: sum = ${sum}`)
+        //console.log(`el = ${el}: sum = ${sum}`)
         sum += Number(el);
     }
     return sum;
 }
 
-// console.log("Вывод процесса работы кода для задания 5/18")
-// let number = prompt("Задайте число для задания 18");
-// console.log(sumSecondHalfDigits(number));
+console.log("Вывод процесса работы кода для задания 5/18")
+let number = prompt("Задайте число для задания 18");
+console.log(sumSecondHalfDigits(number));
 
 
 function findKthDigit(k) {
@@ -53,5 +53,5 @@ function findKthDigit(k) {
     return sequence[k - 1];
 }
 
-// let number = prompt("Задайте число K");
-// console.log(findKthDigit(number));
+let number2 = prompt("Задайте число K");
+console.log(`k-я цифра последовательности ${findKthDigit(number2)}`);
