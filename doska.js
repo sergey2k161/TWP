@@ -20,7 +20,7 @@ for (let i = 0; i < n; i++) {
 document.write("</table>");
 
 
-// 5/18
+/// 5/18
 function sumSecondHalfDigits(number) {
     let numToString = number.toString();
     console.log(`numToString = ${numToString}`)
@@ -29,17 +29,22 @@ function sumSecondHalfDigits(number) {
 
     let sum = 0;
     for (let el of secondHalf) {
-        //console.log(`el = ${el}: sum = ${sum}`)
         sum += Number(el);
+        console.log(`el = ${el}: sum = ${sum}`)
     }
     return sum;
 }
 
-console.log("Вывод процесса работы кода для задания 5/18")
-let number = prompt("Задайте число для задания 18");
-console.log(sumSecondHalfDigits(number));
+function sumSecondHalfDigitsClick() {
+    let number = Number(document.getElementById("number").value);
+    if (isNaN(number)) {
+        alert("Ошибка: Введите корректное число.");
+        return;
+    }
+    document.getElementById("resultHalf").textContent = `Результат: ${sumSecondHalfDigits(number)}`;
+}
 
-
+// 5/31
 function findKthDigit(k) {
     let sequence = "";
     let num = 2;
@@ -51,7 +56,11 @@ function findKthDigit(k) {
     console.log(sequence)
 
     return sequence[k - 1];
+    document.getElementById("resultDigit").textContent = sequence[k - 1];
 }
 
-let number2 = prompt("Задайте число K");
-console.log(`k-я цифра последовательности ${findKthDigit(number2)}`);
+function findKthDigitClick() {
+    let k = Number(document.getElementById("numberDigit").value);
+
+    document.getElementById("resultDigit").textContent = `Результат: ${findKthDigit(k)}`;
+}
