@@ -30,8 +30,8 @@ function sumSecondHalfDigits(number) {
 
     let sum = 0;
     for (let el of secondHalf) {
-        console.log(`el = ${el}: sum = ${sum}`)
         sum += Number(el);
+        console.log(`el = ${el}: sum = ${sum}`)
     }
     return sum;
 }
