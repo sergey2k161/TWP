@@ -56,6 +56,7 @@
 <div class="column">
     <h2>Покер: определение комбинации</h2>
     <button onclick="toggleAutoGeneration()">Сгенерировать раздачу</button>
+    <button onclick="generateStraight()">Стрит</button>
 
     <div id="handDisplay"></div>
     <p id="resultText"></p>
@@ -178,7 +179,19 @@
 
     }
 
+    function generateStraight() {
+        // Фиксированный стрит A-2-3-4-5
+        const straightRanks = ["туз", "2", "3", "4", "5"];
+        const suits = ["пик", "червей", "треф", "бубен"];
 
+        // Создаем руку с разными мастями
+        const hand = straightRanks.map((rank, index) => {
+            return { rank, suit: suits[index % suits.length] };
+        });
+
+        displayHand(hand);
+        document.getElementById("resultText").innerText = "Стрит (A-2-3-4-5)";
+    }
     function displayHand(hand) {
         const container = document.getElementById("handDisplay");
         container.innerHTML = "";
