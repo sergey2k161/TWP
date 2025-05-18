@@ -1,0 +1,286 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторная работа №5</title>
+    <style>
+        body {
+            display: flex;
+            font-family: sans-serif;
+        }
+        .column {
+            flex: 1;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        #graphArea {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+        }
+        .dot {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: blue;
+        }
+        .grid-line {
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background: repeating-linear-gradient(to right, #ccc 0, #ccc 4px, transparent 4px, transparent 8px);
+        }
+        .v-grid-line {
+            position: absolute;
+            height: 100%;
+            width: 1px;
+            background: repeating-linear-gradient(to bottom, #ccc 0, #ccc 4px, transparent 4px, transparent 8px);
+        }
+        .controls button {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="column">
+    <h2>График функции: sin²(x)</h2>
+    <div class="controls">
+        <button onclick="zoom(1.1)">Увеличить</button>
+        <button onclick="zoom(0.9)">Уменьшить</button>
+    </div>
+    <div id="graphArea"></div>
+</div>
+
+<div class="column">
+    <h2>Покер: определение комбинации</h2>
+    <button onclick="toggleAutoGeneration()">Сгенерировать раздачу</button>
+    <button onclick="generateStraight()">Стрит</button>
+
+    <div id="handDisplay"></div>
+    <p id="resultText"></p>
+</div>
+
+<script>
+    // ГРАФИК
+    let params = new URLSearchParams(window.location.search);
+    let shiftX = parseInt(params.get("shiftX")) || 0;
+    let shiftY = parseInt(params.get("shiftY")) || 0;
+    let scale = parseFloat(params.get("scale")) || 30;
+
+    shiftX = isNaN(shiftX) ? 0 : shiftX;
+    shiftY = isNaN(shiftY) ? 0 : shiftY;
+    scale = isNaN(scale) || scale <= 5 ? 30 : scale;
+
+    const graphArea = document.getElementById("graphArea");
+
+    function drawGraph() {
+        graphArea.innerHTML = "";
+
+        // сетка
+        const gridStep = scale; // теперь шаг сетки зависит от масштаба
+
+        const gridCount = Math.floor(400 / gridStep); // максимум линий в 400px области
+
+        for (let i = 0; i <= gridCount; i++) {
+            let hLine = document.createElement("div");
+            hLine.className = "grid-line";
+            hLine.style.top = `${i * gridStep}px`;
+            graphArea.appendChild(hLine);
+
+            let vLine = document.createElement("div");
+            vLine.className = "v-grid-line";
+            vLine.style.left = `${i * gridStep}px`;
+            graphArea.appendChild(vLine);
+        }
+        // оси
+        let axisX = document.createElement("div");
+        axisX.innerText = "X";
+        axisX.style.position = "absolute";
+        axisX.style.top = `${200 + shiftY}px`;
+        axisX.style.width = "100%";
+        axisX.style.height = "1px";
+        axisX.style.background = "black";
+        graphArea.appendChild(axisX);
+
+        let axisY = document.createElement("div");
+        axisY.innerText = "Y";
+        axisY.style.position = "absolute";
+        axisY.style.left = `${200 + shiftX}px`;
+        axisY.style.width = "1px";
+        axisY.style.height = "100%";
+        axisY.style.background = "black";
+        graphArea.appendChild(axisY);
+
+        // график
+        for (let x = -5; x <= 5; x += 0.05) {
+            let y = Math.pow(Math.sin(x), 2);
+            let dot = document.createElement("div");
+            dot.className = "dot";
+            dot.style.left = `${200 + shiftX + x * scale}px`;
+            dot.style.top = `${200 + shiftY - y * scale}px`;
+            graphArea.appendChild(dot);
+        }
+    }
+    function zoom(factor) {
+        scale *= factor;
+        if (scale < 14) {
+            scale = 14;
+        }
+
+        if (scale > 38) {
+            scale = 38
+        }
+        console.log(scale);
+        drawGraph();
+    }
+
+    drawGraph();
+
+    // ПОКЕР
+    const suits = ["пик", "червей", "треф", "бубен"];
+    const ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "валет", "дама", "король", "туз"];
+    const rankValues = {
+        "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7,
+        "8": 8, "9": 9, "10": 10, "валет": 11, "дама": 12,
+        "король": 13, "туз": 14
+    };
+
+    function checkGame(hand) {
+        if (!isStraight(hand) && !isThree(hand)) {
+            throw "Нет игры"; // Исключение выбрасывается
+        }
+        return true;
+    }
+    function isThree(hand) {
+        let values = hand.map(card => rankValues[card.rank]);
+        let counts = {};
+
+        for (let value of values) {
+            counts[value] = (counts[value] || 0) + 1;
+        }
+
+        if (!Object.values(counts).includes(3)) {
+            return false;
+        }
+        return true;
+    }
+    function generateHand() {
+        let deck = [];
+        for (let r of ranks)
+            for (let s of suits)
+                deck.push({ rank: r, suit: s });
+
+        deck.sort(() => Math.random() - 0.5);
+        let hand = deck.slice(0, 5);
+        displayHand(hand);
+
+        let result;
+        try {
+            result = checkGame(hand);
+            if (result) {
+                document.getElementById("resultText").innerText = "Игра есть";
+                return true;
+            }
+        } catch (e) {
+            result = e;
+        }
+
+        document.getElementById("resultText").innerText = result;
+
+    }
+
+    function generateStraight() {
+        // Фиксированный стрит A-2-3-4-5
+        const straightRanks = ["туз", "2", "3", "4", "5"];
+        const suits = ["пик", "червей", "треф", "бубен"];
+
+        // Создаем руку с разными мастями
+        const hand = straightRanks.map((rank, index) => {
+            return { rank, suit: suits[index % suits.length] };
+        });
+
+        displayHand(hand);
+        document.getElementById("resultText").innerText = "Стрит (A-2-3-4-5)";
+    }
+    function displayHand(hand) {
+        const container = document.getElementById("handDisplay");
+        container.innerHTML = "";
+
+        hand.forEach(card => {
+            const img = document.createElement("img");
+            img.width = 60;
+
+            const suitMap = {
+                "пик": "spade",
+                "червей": "heart",
+                "треф": "club",
+                "бубен": "diamond"
+            };
+
+            const rankMap = {
+                "2": "2", "3": "3", "4": "4", "5": "5", "6": "6",
+                "7": "7", "8": "8", "9": "9", "10": "10",
+                "валет": "J",
+                "дама": "Q",
+                "король": "K",
+                "туз": "A"
+            };
+
+
+            const suit = suitMap[card.suit];
+            const rank = rankMap[card.rank];
+            const filename = `cards/40px-Playing_card_${suit}_${rank}.svg.png`;
+
+            img.src = filename;
+            img.alt = `${card.rank} ${card.suit}`;
+            img.title = img.alt;
+            container.appendChild(img);
+        });
+    }
+
+
+    function isStraight(hand) {
+        let values = [];
+        for (let i = 0; i < hand.length; i++) {
+            values.push(rankValues[hand[i].rank]);
+        }
+
+        // Проверка: карты должны идти строго по порядку в массиве
+        for (let i = 1; i < values.length; i++) {
+            if (values[i] !== values[i - 1] + 1) {
+                if (i === 4 && values[0] === 2 && values[1] === 3 && values[2] === 4 && values[3] === 5 && values[4] === 14) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    let intervalId = null;
+
+    function toggleAutoGeneration() {
+        const btn = document.querySelector("button[onclick='toggleAutoGeneration()']");
+
+        if (intervalId === null) {
+            btn.innerText = "Остановить перебор";
+            intervalId = setInterval(() => {
+                if (generateHand()) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                    btn.innerText = "Сгенерировать раздачу";
+                }
+            }, 1);
+        } else {
+            clearInterval(intervalId);
+            intervalId = null;
+            btn.innerText = "Сгенерировать раздачу";
+        }
+    }
+</script>
+</body>
+</html>
