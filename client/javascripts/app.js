@@ -1,263 +1,275 @@
-﻿var main = function (taskObjects) {
-    "use strict";
+﻿$(function() {
+    // Форматирование даты (например, 2025-05-18 -> 18.05.2025)
+    function formatDate(dateStr) {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
 
-    var tasks = taskObjects.map(function (task) {
-        return task.name;
+    let tasks = [];
+
+    // Функции сортировки/группировки
+
+    function renderTaskCard(task) {
+        let tags = Array.isArray(task.tags) ? task.tags : (typeof task.tags === 'string' ? task.tags.split(",").map(t => t.trim()) : []);
+        let tagsText = tags.length ? tags.join(", ") : "Нет";
+
+        return $(`
+            <div class="task" data-id="${task.id}">
+                <h3>${task.name}</h3>
+                <p><strong>Дата:</strong> ${task.date}</p>
+                <p><strong>Время:</strong> ${task.time}</p>
+                <p><strong>Место:</strong> ${task.place}</p>
+                <p><strong>Теги:</strong> ${tagsText}</p>
+                <button class="delete-btn">Удалить</button>
+                <button class="update-btn">Редактировать</button>
+            </div>
+        `);
+    }
+
+    function renderTasksList(tasksToRender) {
+        const $list = $("#task-list");
+        $list.empty();
+        if (tasksToRender.length === 0) {
+            $list.append("<p>Задачи отсутствуют</p>");
+            return;
+        }
+        tasksToRender.forEach(task => {
+            $list.append(renderTaskCard(task));
+        });
+    }
+
+    function organizeByTags(tasks) {
+        let tags = [];
+        tasks.forEach(task => {
+            (Array.isArray(task.tags) ? task.tags : []).forEach(tag => {
+                if (!tags.includes(tag)) tags.push(tag);
+            });
+        });
+
+        const $list = $("#task-list");
+        $list.empty();
+        if (tags.length === 0) {
+            $list.append("<p>Задачи без тегов</p>");
+            return;
+        }
+
+        tags.forEach(tag => {
+            let filteredTasks = tasks.filter(task => (Array.isArray(task.tags) ? task.tags : []).includes(tag));
+            const $group = $(`<div><h2>Тег: ${tag}</h2></div>`);
+            filteredTasks.forEach(task => $group.append(renderTaskCard(task)));
+            $list.append($group);
+        });
+    }
+
+    function organizeByPlace(tasks) {
+        let places = [];
+        tasks.forEach(task => {
+            if (task.place && !places.includes(task.place)) places.push(task.place);
+        });
+
+        const $list = $("#task-list");
+        $list.empty();
+        if (places.length === 0) {
+            $list.append("<p>Задачи без места</p>");
+            return;
+        }
+
+        places.forEach(place => {
+            let filteredTasks = tasks.filter(task => task.place === place);
+            const $group = $(`<div><h2>Место: ${place}</h2></div>`);
+            filteredTasks.forEach(task => $group.append(renderTaskCard(task)));
+            $list.append($group);
+        });
+    }
+
+    function organizeByDateAndTime(tasks) {
+        // Получаем уникальные даты и сортируем их
+        let dates = [...new Set(tasks.map(t => t.date))].sort();
+
+        const $list = $("#task-list");
+        $list.empty();
+
+        if (dates.length === 0) {
+            $list.append("<p>Задачи без даты</p>");
+            return;
+        }
+
+        dates.forEach(date => {
+            // Фильтруем задачи по дате и сортируем их по времени
+            let filteredTasks = tasks.filter(task => task.date === date)
+                .sort((a, b) => a.time.localeCompare(b.time));
+
+            const $group = $(`<div><h2>Дата: ${date}</h2></div>`);
+
+            filteredTasks.forEach(task => $group.append(renderTaskCard(task)));
+
+            $list.append($group);
+        });
+    }
+
+    // Отрисовка задач в зависимости от выбранной вкладки
+    function renderByTab(tabName) {
+        switch(tabName) {
+            case "Новые":
+                // сортируем по createdAt DESC
+                renderTasksList(tasks.slice().sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)));
+                break;
+            case "Старые":
+                // сортируем по createdAt ASC
+                renderTasksList(tasks.slice().sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt)));
+                break;
+            case "По пометкам":
+                organizeByTags(tasks);
+                break;
+            case "По месту":
+                organizeByPlace(tasks);
+                break;
+            case "По дате":
+                organizeByDateAndTime(tasks);
+                break;
+            case "Добавить":
+                // Показываем форму добавления
+                $("#task-list").html(`
+                    <form id="task-form">
+                        <p><input type="text" name="name" placeholder="Название задачи" required></p>
+                        <p><input type="date" name="date" required></p>
+                        <p><input type="time" name="time" required></p>
+                        <p><input type="text" name="place" placeholder="Место"></p>
+                        <p><input type="text" name="tags" placeholder="Теги через запятую"></p>
+                        <p><button type="submit">Добавить задачу</button></p>
+                    </form>
+                `);
+                break;
+            default:
+                renderTasksList(tasks);
+        }
+    }
+
+    // Загрузить задачи с сервера
+    function loadTasks() {
+        $.getJSON("/api/tasks")
+            .done(data => {
+                tasks = data;
+                // По умолчанию "Новые"
+                renderByTab("Новые");
+            })
+            .fail(() => {
+                alert("Ошибка загрузки задач");
+            });
+    }
+
+    loadTasks();
+
+    // Обработка клика по вкладкам
+    $(".tabs a span").on("click", function(e) {
+        e.preventDefault();
+        $(".tabs a span").removeClass("active");
+        $(this).addClass("active");
+        const tabName = $(this).text();
+        renderByTab(tabName);
     });
 
-    var organizeByTags = function (taskObjects) {
-        var tags = [];
+    // Делегирование событий формы добавления задачи
+    $("#task-list").on("submit", "#task-form", function(e) {
+        e.preventDefault();
+        const data = {
+            name: this.name.value,
+            date: this.date.value,
+            time: this.time.value,
+            place: this.place.value,
+            tags: this.tags.value ? this.tags.value.split(",").map(t => t.trim()) : []
+        };
+        $.ajax({
+            url: "/api/tasks",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function(newTask) {
+                loadTasks();
+                // Активировать вкладку "Новые" после добавления
+                $(".tabs a span").removeClass("active");
+                $(".tabs a span").filter(function(){ return $(this).text() === "Новые"; }).addClass("active");
+            },
+            error: function() {
+                alert("Ошибка при добавлении задачи");
+            }
+        });
+    });
 
-        taskObjects.forEach(function (task) {
-            task.tags.forEach(function (tag) {
-                if (tags.indexOf(tag) === -1) {
-                    tags.push(tag);
+    // Делегирование кнопки удаления
+    $("#task-list").on("click", ".delete-btn", function() {
+        const id = $(this).closest(".task").data("id");
+        if (confirm("Удалить задачу?")) {
+            $.ajax({
+                url: `/api/tasks/${id}`,
+                method: "DELETE",
+                success: function() {
+                    loadTasks();
+                },
+                error: function() {
+                    alert("Ошибка при удалении");
                 }
             });
-        });
+        }
+    });
 
-        return tags.map(function (tag) {
-            var tasksWithTag = taskObjects.filter(function (task) {
-                return task.tags.indexOf(tag) !== -1;
-            });
-            return { "name": tag, "tasks": tasksWithTag };
-        });
-    };
+    // Редактирование можно добавить аналогично
+    $("#task-list").on("click", ".update-btn", function() {
+        const $taskCard = $(this).closest(".task");
+        const id = $taskCard.data("id");
 
-    var organizeByPlace = function (taskObjects) {
-        var places = [];
+        // Получаем текущие данные задачи
+        const name = $taskCard.find("h3").text();
+        const date = $taskCard.find("p:nth-child(2)").text().replace("Дата: ", "");
+        const time = $taskCard.find("p:nth-child(3)").text().replace("Время: ", "");
+        const place = $taskCard.find("p:nth-child(4)").text().replace("Место: ", "");
+        const tags = $taskCard.find("p:nth-child(5)").text().replace("Теги: ", "").split(", ");
 
-        taskObjects.forEach(function (task) {
-            if (places.indexOf(task.place) === -1) {
-                places.push(task.place);
+        // Очищаем задачу и заменяем ее формой редактирования
+        $taskCard.html(`
+        <input type="text" class="edit-name" value="${name}">
+        <input type="date" class="edit-date" value="${date}">
+        <input type="time" class="edit-time" value="${time}">
+        <input type="text" class="edit-place" value="${place}">
+        <input type="text" class="edit-tags" value="${tags.join(", ")}">
+        <button class="save-btn">Сохранить</button>
+        <button class="cancel-btn">Отмена</button>
+        `);
+    });
+
+    $("#task-list").on("click", ".save-btn", function() {
+        const $taskCard = $(this).closest(".task");
+        const id = $taskCard.data("id");
+
+        // Получаем обновленные данные из формы
+        const updatedTask = {
+            name: $taskCard.find(".edit-name").val(),
+            date: $taskCard.find(".edit-date").val(),
+            time: $taskCard.find(".edit-time").val(),
+            place: $taskCard.find(".edit-place").val(),
+            tags: $taskCard.find(".edit-tags").val().split(",").map(tag => tag.trim())
+        };
+
+        // Отправляем обновленные данные на сервер
+        $.ajax({
+            url: `/api/tasks/${id}`,
+            method: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify(updatedTask),
+            success: function() {
+                loadTasks(); // Загружаем обновленный список
+            },
+            error: function() {
+                alert("Ошибка при редактировании");
             }
-        });
-
-        return places.map(function (place) {
-            var tasksAtPlace = taskObjects.filter(function (task) {
-                return task.place === place;
-            });
-            return { "name": place, "tasks": tasksAtPlace };
-        });
-    };
-
-    var organizeByDateAndTime = function (taskObjects) {
-        var dates = [];
-
-        taskObjects.forEach(function (task) {
-            if (dates.indexOf(task.date) === -1) {
-                dates.push(task.date);
-            }
-        });
-
-        dates.sort();
-
-        return dates.map(function (date) {
-            var tasksOnDate = taskObjects.filter(function (task) {
-                return task.date === date;
-            });
-
-            var times = [];
-            tasksOnDate.forEach(function (task) {
-                if (times.indexOf(task.time) === -1) {
-                    times.push(task.time);
-                }
-            });
-            times.sort();
-
-            var timeGroups = times.map(function (time) {
-                var tasksAtTime = tasksOnDate.filter(function (task) {
-                    return task.time === time;
-                });
-                return {
-                    time: time,
-                    tasks: tasksAtTime
-                };
-            });
-
-            return {
-                name: formatDate(date),
-                times: timeGroups
-            };
-        });
-    };
-
-    var formatDate = function (dateString) {
-        var date = new Date(dateString);
-        var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        return date.toLocaleDateString('ru-RU', options);
-    };
-    var renderTaskCard = function (task) {
-        var $taskItem = $("<div>").addClass("task-item");
-
-        $taskItem.append($("<h3>").text(task.name));
-        $taskItem.append($("<p>").html("<strong>Дата и время:</strong> " + formatDate(task.date) + ", " + task.time));
-        $taskItem.append($("<p>").html("<strong>Место:</strong> " + task.place));
-
-        var $tagsContainer = $("<div>").addClass("tags");
-        task.tags.forEach(function (tag) {
-            $tagsContainer.append($("<span>").addClass("tag").text(tag));
-        });
-
-        $taskItem.append($tagsContainer);
-        return $taskItem;
-    };
-
-    var renderDateTimeGroups = function (groups) {
-        var $container = $("<div>");
-
-        groups.forEach(function (dateGroup) {
-            var $dateGroup = $("<div>").addClass("task-group");
-            $dateGroup.append($("<h2>").text(dateGroup.name));
-
-            dateGroup.times.forEach(function (timeGroup) {
-                var $timeGroup = $("<div>").addClass("time-group");
-                $timeGroup.append($("<h3>").text("Время: " + timeGroup.time));
-
-                timeGroup.tasks.forEach(function (task) {
-                    $timeGroup.append(renderTaskCard(task));
-                });
-
-                $dateGroup.append($timeGroup);
-            });
-
-            $container.append($dateGroup);
-        });
-
-        return $container;
-    };
-
-    $(".tabs a span").toArray().forEach(function (element) {
-        $(element).on("click", function () {
-            var $element = $(element);
-            var $content;
-
-            $(".tabs a span").removeClass("active");
-            $element.addClass("active");
-            $("main .content").empty();
-
-            if ($element.parent().is(":nth-child(1)")) {
-                $content = $("<div>");
-                var sortedTasks = taskObjects.slice().sort(function (a, b) {
-                    return new Date(b.createdAt) - new Date(a.createdAt);
-                });
-                sortedTasks.forEach(function (task) {
-                    $content.append(renderTaskCard(task));
-                });
-            } else if ($element.parent().is(":nth-child(2)")) {
-                $content = $("<div>");
-                var sortedTasks = taskObjects.slice().sort(function (a, b) {
-                    return new Date(a.createdAt) - new Date(b.createdAt);
-                });
-                sortedTasks.forEach(function (task) {
-                    $content.append(renderTaskCard(task));
-                });
-            } else if ($element.parent().is(":nth-child(3)")) {
-                $content = $("<div>");
-                var organizedByTag = organizeByTags(taskObjects);
-                organizedByTag.forEach(function (tagGroup) {
-                    var $tagGroupContainer = $("<div>").addClass("task-group");
-                    $tagGroupContainer.append($("<h2>").text(tagGroup.name));
-                    tagGroup.tasks.forEach(function (task) {
-                        $tagGroupContainer.append(renderTaskCard(task));
-                    });
-                    $content.append($tagGroupContainer);
-                });
-            } else if ($element.parent().is(":nth-child(4)")) {
-                $content = $("<div>");
-                var organizedByPlace = organizeByPlace(taskObjects);
-                organizedByPlace.forEach(function (placeGroup) {
-                    var $placeGroupContainer = $("<div>").addClass("task-group");
-                    $placeGroupContainer.append($("<h2>").text(placeGroup.name));
-                    placeGroup.tasks.forEach(function (task) {
-                        $placeGroupContainer.append(renderTaskCard(task));
-                    });
-                    $content.append($placeGroupContainer);
-                });
-            } else if ($element.parent().is(":nth-child(5)")) {
-                var organizedByDateTime = organizeByDateAndTime(taskObjects);
-                $content = renderDateTimeGroups(organizedByDateTime);
-            } else if ($element.parent().is(":nth-child(6)")) {
-                $content = $("<div>");
-                $content.append($("<h2>").text("Добавить новую задачу").css("margin-bottom", "20px"));
-
-                $content.append($("<p>").text("Название задачи:"));
-                var $nameInput = $("<input type='text' placeholder='Введите название задачи'>");
-                $content.append($nameInput);
-
-                $content.append($("<p>").text("Дата:"));
-                var $dateInput = $("<input type='date'>");
-                $content.append($dateInput);
-
-                $content.append($("<p>").text("Время:"));
-                var $timeInput = $("<input type='time'>");
-                $content.append($timeInput);
-
-                $content.append($("<p>").text("Место:"));
-                var $placeInput = $("<input type='text' placeholder='Укажите место'>");
-                $content.append($placeInput);
-
-                $content.append($("<p>").text("Пометки (теги через запятую):"));
-                var $tagsInput = $("<input type='text' placeholder='Например: Работа, Важно, Срочно'>");
-                $content.append($tagsInput);
-
-                var $addButton = $("<button>").text("Добавить задачу");
-                $content.append($addButton);
-
-                $addButton.on("click", function () {
-                    if (
-                        $nameInput.val() !== "" &&
-                        $dateInput.val() !== "" &&
-                        $timeInput.val() !== "" &&
-                        $placeInput.val() !== ""
-                    ) {
-                        var newTask = {
-                            name: $nameInput.val(),
-                            date: $dateInput.val(),
-                            time: $timeInput.val(),
-                            place: $placeInput.val(),
-                            tags: $tagsInput.val()
-                                ? $tagsInput.val().split(",").map(tag => tag.trim())
-                                : [],
-                            createdAt: new Date().toISOString()
-                        };
-
-                        $.post("tasks", newTask, function (response) {
-                            console.log("Ответ сервера:", response);
-
-                            taskObjects.push(newTask);
-                            tasks.push(newTask.name);
-
-                            $nameInput.val("");
-                            $dateInput.val("");
-                            $timeInput.val("");
-                            $placeInput.val("");
-                            $tagsInput.val("");
-
-                            alert("Задача добавлена!");
-                        }).fail(function () {
-                            alert("Ошибка при отправке данных на сервер.");
-                        });
-
-                    } else {
-                        alert("Пожалуйста, заполните все обязательные поля!");
-                    }
-                });
-            }
-
-            $("main .content").append($content);
-            return false;
         });
     });
 
-    $(".tabs a:first-child span").trigger("click");
-};
-
-$(document).ready(function () {
-    $.getJSON("tasks", function (taskObjects) {
-        main(taskObjects);
-    }).fail(function (jqxhr, textStatus, error) {
-        console.log("Ошибка загрузки данных: " + textStatus + ", " + error);
-        main([]);
+    $("#task-list").on("click", ".cancel-btn", function() {
+        loadTasks(); // Просто загружаем задачи заново, чтобы отменить изменения
     });
+
 });
+
+
+

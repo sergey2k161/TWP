@@ -1,4 +1,4 @@
-﻿﻿body {
+﻿body {
     font-family: 'Ubuntu', sans-serif;
     background-color: #f5f5f5;
     color: #333;
@@ -64,7 +64,8 @@ header h1 {
     min-height: 300px;
 }
 
-.task-item {
+/* Задачи теперь с классом .task */
+.task {
     background-color: #f9f9f9;
     border-radius: 8px;
     padding: 15px;
@@ -73,28 +74,29 @@ header h1 {
     transition: transform 0.2s;
 }
 
-.task-item:hover {
+.task:hover {
     transform: translateY(-3px);
 }
 
-.task-item h3 {
+.task h3 {
     font-size: 18px;
     margin-bottom: 8px;
     color: #4b0082;
 }
 
-.task-item p {
+.task p {
     margin: 5px 0;
     font-size: 14px;
 }
 
-.task-item .tags {
+/* Для тегов внутри задачи можно сделать отдельный блок, если нужно */
+.task .tags {
     display: flex;
     flex-wrap: wrap;
     margin-top: 10px;
 }
 
-.task-item .tag {
+.task .tag {
     background-color: #e0e0e0;
     border-radius: 20px;
     padding: 3px 10px;
@@ -103,6 +105,7 @@ header h1 {
     margin-bottom: 5px;
 }
 
+/* Группы задач — если используешь */
 .task-group {
     margin-bottom: 30px;
 }

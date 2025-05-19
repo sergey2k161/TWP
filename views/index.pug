@@ -1,0 +1,31 @@
+﻿doctype html
+html
+    head
+        title Личные дела - Управление задачами
+        meta(charset="UTF-8")
+        link(rel="stylesheet", href="/stylesheets/reset.css")
+        link(rel="stylesheet", href="/stylesheets/style.css")
+    body
+        header
+            h1 Личные дела
+        main
+            .container
+                .tabs
+                    a(href="#")
+                        span.active Новые
+                    a(href="#")
+                        span Старые
+                    a(href="#")
+                        span По пометкам
+                    a(href="#")
+                        span По месту
+                    a(href="#")
+                        span По дате
+                    a(href="#")
+                        span Добавить
+
+                .content
+                    #task-list
+
+        script(src="https://code.jquery.com/jquery-3.4.1.min.js")
+        script(src="/javascripts/app.js")
